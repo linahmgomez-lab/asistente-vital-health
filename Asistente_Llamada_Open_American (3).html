@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Asistente de Llamada — Open American Insurance</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background-color: #0f172a;
+    color: #e2e8f0;
+    margin: 0;
+    padding: 32px 16px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+  }
+  .card { background-color: #1e293b; border-radius: 16px; padding: 28px; max-width: 560px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+  h1 { font-size: 19px; margin: 0 0 2px 0; color: #fff; }
+  .subtitle { font-size: 12.5px; color: #94a3b8; margin-bottom: 20px; }
+
+  .paso { border-top: 1px solid #334155; padding-top: 16px; margin-top: 16px; }
+  .paso:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+  .paso-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 6px; font-size: 12px; font-weight: bold; color: white; margin-right: 8px;
+  }
+  .p1{background:#0d47a1} .p2{background:#455a64} .p3{background:#00695c} .p4{background:#2e7d32}
+  .p5{background:#1565c0} .p6{background:#6a1b9a} .p7{background:#e65100} .p8{background:#ad1457}
+
+  .paso-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 10px; }
+
+  label { display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 6px; margin-top: 10px; }
+  input[type=number], input[type=text], select {
+    width: 100%; padding: 10px 12px; font-size: 14px; border-radius: 8px;
+    border: 1.5px solid #334155; background-color: #0f172a; color: #fff;
+  }
+  input:focus, select:focus { outline: none; border-color: #38bdf8; }
+
+  .opciones { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+  .opcion {
+    display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+    border-radius: 8px; border: 1.5px solid #334155; cursor: pointer; font-size: 13px; background-color: #0f172a;
+  }
+  .opcion input { width: auto; margin: 0; }
+  .opcion.selected { border-color: #38bdf8; background-color: #0c2540; }
+
+  .script-box {
+    margin-top: 10px; padding: 12px 14px; border-radius: 8px;
+    background-color: #0c2540; font-size: 12.5px; color: #cbd5e1; line-height: 1.6;
+    border-left: 3px solid #38bdf8;
+  }
+  .script-box b { color: #7dd3fc; }
+  .script-box .quote { font-style: italic; }
+
+  .alerta-box {
+    margin-top: 10px; padding: 10px 14px; border-radius: 8px;
+    background-color: #3a0d0d; font-size: 12.5px; color: #fca5a5; line-height: 1.5;
+    border-left: 3px solid #f87171;
+  }
+
+  .resultado-final { margin-top: 22px; padding: 20px; border-radius: 14px; background-color: #0f172a; text-align: left; }
+  .resultado-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; margin-bottom: 8px; }
+  .resultado-metal { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .resultado-sub { font-size: 13px; color: #cbd5e1; line-height: 1.5; }
+  .verde-txt { color: #4ade80; } .amarillo-txt { color: #fbbf24; } .rojo-txt { color: #f87171; }
+
+  .hogar-calculado { margin-top: 10px; padding: 8px 12px; border-radius: 8px; background-color: #052e1c; font-size: 12.5px; color: #4ade80; font-weight: 600; }
+
+  .cotizante-card {
+    margin-top: 12px; padding: 14px 16px; border-radius: 10px;
+    background-color: #16223a; border: 1px solid #2d3f5c;
+  }
+  .cotizante-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .cotizante-label { font-size: 13px; font-weight: 600; color: #7dd3fc; }
+  .btn-quitar {
+    background: none; border: none; color: #f87171; font-size: 12px; cursor: pointer; padding: 2px 6px;
+  }
+  .btn-agregar {
+    margin-top: 12px; width: 100%; padding: 10px; border-radius: 8px; border: 1.5px dashed #38bdf8;
+    background-color: transparent; color: #38bdf8; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .btn-agregar:hover { background-color: #0c2540; }
+  .opciones-inline { flex-direction: row; gap: 8px; }
+  .opciones-inline .opcion { flex: 1; justify-content: center; }
+  .ingreso-calculado {
+    margin-top: 12px; padding: 10px 14px; border-radius: 8px;
+    background-color: #052e1c; font-size: 13px; color: #4ade80; font-weight: 600; line-height: 1.7;
+  }
+  .subtotal-cotizante {
+    margin-top: 8px; font-size: 12.5px; color: #7dd3fc; font-weight: 600;
+  }
+  .empleo-subtitulo {
+    font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase;
+    letter-spacing: 0.5px; margin-top: 12px; margin-bottom: 4px; border-top: 1px dashed #334155; padding-top: 10px;
+  }
+  .empleo2-block { margin-top: 4px; }
+  .deducible-hint {
+    margin-top: 6px; font-size: 12px; color: #fbbf24; font-weight: 600;
+  }
+  .mini-traductor {
+    margin-top: 12px; padding: 12px 14px; border-radius: 10px;
+    background-color: #16223a; border: 1px dashed #38bdf8;
+  }
+  .traductor-resultado {
+    margin-top: 8px; font-size: 13px; color: #4ade80; font-weight: 600; min-height: 18px;
+  }
+  .fpl-gauge-wrap { margin-top: 8px; }
+  .fpl-bar-track { width: 100%; height: 10px; border-radius: 6px; background-color: #1e293b; overflow: hidden; margin-top: 4px; }
+  .fpl-bar-fill { height: 100%; border-radius: 6px; transition: width 0.3s; }
+
+  .checklist-box { margin-top: 14px; padding: 14px 16px; border-radius: 10px; background-color: #1a2942; font-size: 12.5px; color: #cbd5e1; line-height: 1.8; }
+  .checklist-box b { color: #e2e8f0; }
+
+  footer { margin-top: 18px; font-size: 10.5px; color: #64748b; text-align: center; }
+  .hidden { display: none; }
+
+  .resumen-final {
+    margin-top: 18px; padding: 16px 18px; border-radius: 12px;
+    background-color: #0c2540; border: 1.5px solid #38bdf8;
+  }
+  .resumen-titulo { font-size: 14px; font-weight: 700; color: #7dd3fc; margin-bottom: 10px; }
+  #resumen-contenido {
+    font-family: 'Courier New', monospace; font-size: 12.5px; color: #e2e8f0;
+    background-color: #0f172a; border-radius: 8px; padding: 12px 14px; line-height: 1.8;
+    white-space: pre-wrap; margin-bottom: 10px;
+  }
+  .copiado-msg { margin-top: 8px; font-size: 12.5px; color: #4ade80; font-weight: 600; text-align: center; }
+
+  .tabs-nav { display: flex; gap: 6px; margin-bottom: 18px; }
+  .tab-btn {
+    flex: 1; padding: 10px 4px; border-radius: 8px; border: 1.5px solid #334155;
+    background-color: #0f172a; color: #94a3b8; font-size: 11.5px; font-weight: 600;
+    cursor: pointer; text-align: center; line-height: 1.3;
+  }
+  .tab-btn.tab-activo { border-color: #38bdf8; background-color: #0c2540; color: #7dd3fc; }
+  [data-tab].tab-oculto { display: none !important; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>📞 Asistente de Llamada — Open American Insurance</h1>
+    <div class="subtitle">Sigue el orden. Cada respuesta te da el guión para ayudar al cliente a encontrar lo que mejor le conviene.</div>
+
+    <div class="tabs-nav" id="tabs-nav">
+      <button type="button" class="tab-btn tab-activo" data-goto-tab="1">1. Apertura y<br>Calificación</button>
+      <button type="button" class="tab-btn" data-goto-tab="2">2. Hogar e<br>Ingresos</button>
+      <button type="button" class="tab-btn" data-goto-tab="3">3. Resultado</button>
+      <button type="button" class="tab-btn" data-goto-tab="4">4. Cierre</button>
+    </div>
+
+    <!-- PASO 1: APERTURA -->
+    <div class="paso" data-tab="1">
+      <div class="paso-title"><span class="paso-num p1">1</span>Apertura y detección</div>
+      <div class="script-box">
+        <b>Di esto (con pausas para que el cliente responda):</b><br>
+        <span class="quote">"Hola, buenos días, ¿hablo con el señor/la señora ___ [nombre del cliente]?"</span><br>
+        <i>(esperar respuesta)</i><br>
+        <span class="quote">"Señor/Señora ___, le habla ___, soy asesor(a) de salud en Open American Insurance. ¿Qué tal su día?"</span><br>
+        <i>(esperar respuesta)</i><br>
+        <span class="quote">"Me alegra mucho. El motivo de mi llamada es muy sencillo: estamos haciendo una revisión de las opciones de cobertura médica disponibles para residentes de su estado, y quiero conocer un poco su situación para verificar si vale la pena revisarle un beneficio del gobierno que tenemos disponible para usted. Antes de continuar, permítame hacerle una pregunta..."</span>
+      </div>
+      <label>¿Tiene seguro médico actualmente?</label>
+      <div class="opciones" id="op-tieneseguro">
+        <label class="opcion"><input type="radio" name="tieneseguro" value="no" checked>No tiene seguro</label>
+        <label class="opcion"><input type="radio" name="tieneseguro" value="si">Sí tiene, pero está abierto a comparar</label>
+        <label class="opcion"><input type="radio" name="tieneseguro" value="medicare">Tiene o menciona Medicare/Medicaid</label>
+      </div>
+      <div id="script-no-seguro" class="script-box hidden">
+        <b>Continúa así:</b><br>
+        <span class="quote">"Tranquilo(a), no se preocupe. Vamos a revisar juntos su situación, paso a paso, para ver qué plan hay disponible para usted."</span>
+      </div>
+      <div id="script-si-seguro" class="script-box hidden">
+        <b>Continúa así:</b><br>
+        <span class="quote">"Entiendo que ya cuenta con un seguro — cuénteme, ¿ese seguro es a través de su trabajo, o lo tiene con un agente del Mercado de Salud?"</span>
+      </div>
+      <div id="pregunta-origen-seguro" class="hidden">
+        <label>¿De dónde es el seguro actual?</label>
+        <div class="opciones opciones-inline">
+          <label class="opcion"><input type="radio" name="origenseguro" value="agente" checked>Con un agente / Mercado de Salud</label>
+          <label class="opcion"><input type="radio" name="origenseguro" value="empleo">A través de su trabajo</label>
+        </div>
+      </div>
+      <div id="script-origen-agente" class="script-box hidden">
+        <span class="quote">"Entiendo. Muchas personas en su misma situación han encontrado mejores opciones o más ayuda del gobierno de la que tienen ahora, sin ningún compromiso de cambiar si no le conviene. Y cuénteme: ¿le han hecho seguimiento con ese seguro, ya le llegaron las tarjetas, y tiene un médico asignado — en lo posible que hable español? ¿Le parece si comparamos rápido para ver si hay algo mejor para usted?"</span><br><br>
+        Si acepta, sigue el flujo normal. Al final, si decide cambiarse, recuerda: <b>no tocar la póliza activa</b> — se informa al agente en récord que el cliente decidió cambiar, se adjunta el consentimiento, y se corre la aplicación nueva.
+      </div>
+      <div id="script-origen-empleo" class="script-box hidden">
+        <span class="quote">"Ya veo, gracias por contarme. Entendiendo que usted ya tiene seguro por su trabajo, no vamos a tocar esa parte. Pero cuénteme, ¿tiene familia — esposo/a, hijos — que no estén cubiertos por ese mismo seguro del trabajo? Para ellos sí podríamos revisar si califican para una ayuda del gobierno."</span><br><br>
+        ⚠️ La persona con seguro del trabajo generalmente NO recibe subsidio si ese seguro es "asequible" según las reglas del gobierno — no se le ofrece a ella. Pero los familiares que NO estén cubiertos por ese mismo plan SÍ pueden calificar aparte, aunque el titular del trabajo no califique. Si tienes dudas del caso, confírmalo con tu equipo antes de cerrar.
+      </div>
+
+      <div id="submenu-medicare" class="hidden">
+        <label>¿Es Medicaid, o es Medicare?</label>
+        <div class="opciones" id="op-tipo-medicare">
+          <label class="opcion"><input type="radio" name="tipomedicare" value="medicaid" checked>Medicaid</label>
+          <label class="opcion"><input type="radio" name="tipomedicare" value="medicare">Medicare</label>
+        </div>
+
+        <div id="script-medicaid" class="alerta-box hidden">
+          <b>Di esto para cerrar amablemente:</b><br>
+          <span class="quote">"Qué bueno que ya cuenta con Medicaid — eso significa que ya tiene cobertura. Por reglas del gobierno no se puede combinar con un plan adicional, así que no hace falta que sigamos por acá. Me alegra saber que ya está cubierto. Que tenga un excelente día."</span><br><br>
+          🛑 No continúes con las demás preguntas — esta llamada termina aquí.
+        </div>
+
+        <div id="submenu-parteA" class="hidden">
+          <label>¿Ya está inscrito ACTIVAMENTE en la Parte A de Medicare, o tiene 65+ años pero NO ha completado 10 años (40 trimestres) trabajando y pagando impuestos de Medicare?</label>
+          <div class="opciones" id="op-parteA">
+            <label class="opcion"><input type="radio" name="parteA" value="activo" checked>Ya tiene la Parte A activa e inscrita</label>
+            <label class="opcion"><input type="radio" name="parteA" value="sinparteA">NO tiene Parte A (menos de 10 años cotizando)</label>
+          </div>
+          <div id="script-medicare-activo" class="alerta-box hidden">
+            <b>Di esto para cerrar amablemente:</b><br>
+            <span class="quote">"Qué bien que ya cuenta con Medicare — eso ya le da cobertura, así que no sería necesario buscarle algo adicional por este lado. Me da gusto saber que está cubierto. Muchas gracias por su tiempo."</span><br><br>
+            🛑 No continúes con las demás preguntas — esta llamada termina aquí.
+          </div>
+          <div id="script-medicare-sin-parteA" class="script-box hidden">
+            <b>✅ Sí puede continuar con Obamacare.</b> Como no ha completado los 10 años para la Parte A gratis, no está descalificado.<br>
+            <span class="quote">"Perfecto, entonces sí podemos ver opciones con ayuda del gobierno para usted mientras tanto. Vamos a revisar su información."</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="resto-1">
+    <!-- PASO 2: EXPLICACION DE LA LEY -->
+    <div class="paso" data-tab="1">
+      <div class="paso-title"><span class="paso-num p2">2</span>Explica la ley (si no la conoce o para reforzar)</div>
+      <div class="script-box">
+        <span class="quote">"Mientras tanto, cuénteme, señor/señora: ¿usted conoce o ha escuchado del programa OBAMACARE?"</span>
+      </div>
+      <label>¿Qué respondió?</label>
+      <div class="opciones opciones-inline">
+        <label class="opcion"><input type="radio" name="conoceobamacare" value="si" checked>Sí lo conoce</label>
+        <label class="opcion"><input type="radio" name="conoceobamacare" value="no">No lo conoce</label>
+      </div>
+      <div id="script-conoce-si" class="script-box hidden">
+        <span class="quote">"Qué bueno que ya conozca de Obamacare. Como usted ya sabe, es un programa federal creado para ayudar a las personas a obtener seguro médico. Solo para confirmar: esta ley le brinda una ayuda basada en su edad, código postal, y principalmente sus ingresos — el gobierno le da un crédito fiscal o subsidio, que es una ayuda que usted va a tener cada mes para pagar su póliza."</span><br><br>
+        <b>Beneficios que puedes mencionar:</b> chequeo preventivo gratis al año, medicamentos recetados, emergencias médicas, embarazo/parto/posparto, cobertura de condiciones preexistentes.
+      </div>
+      <div id="script-conoce-no" class="script-box hidden">
+        <span class="quote">"Con mucho gusto le explico qué es y cómo funciona, para que usted decida con toda la información. Obamacare es un programa federal creado para ayudar a las personas a obtener seguro médico. Esta ley le brinda una ayuda basada en su edad, código postal, y principalmente sus ingresos — el gobierno le da un crédito fiscal o subsidio, que es una ayuda que usted va a tener cada mes para pagar su póliza."</span><br><br>
+        <b>Beneficios que puedes mencionar:</b> chequeo preventivo gratis al año, medicamentos recetados, emergencias médicas, embarazo/parto/posparto, cobertura de condiciones preexistentes.
+      </div>
+    </div>
+
+    <!-- PASO 3: CLASIFICACION -->
+    <div class="paso" data-tab="1">
+      <div class="paso-title"><span class="paso-num p3">3</span>Clasificación (requisitos obligatorios)</div>
+      <label>¿Cuál es su estatus migratorio?</label>
+      <select id="status-migratorio">
+        <option value="residente">Residente</option>
+        <option value="ciudadano">Ciudadano</option>
+        <option value="permiso">Permiso de trabajo</option>
+        <option value="tramite">En trámite</option>
+        <option value="asilo">Asilo / Refugiado</option>
+        <option value="visa">Visa de trabajo</option>
+        <option value="parolee">Parolee humanitario</option>
+        <option value="tps">Protección temporal (TPS)</option>
+        <option value="i220a">I-220A</option>
+        <option value="ninguno">Ninguno de los anteriores / no está seguro</option>
+      </select>
+      <label>¿Declara Taxes anualmente o piensa hacerlo para el próximo año?</label>
+      <div class="opciones" id="op-taxes">
+        <label class="opcion"><input type="radio" name="taxes" value="si" checked>Sí, declara o va a declarar</label>
+        <label class="opcion"><input type="radio" name="taxes" value="no">No, no piensa declarar</label>
+      </div>
+      <div id="alerta-clasificacion" class="alerta-box hidden">
+        🛑 No cumple los 2 requisitos obligatorios (estatus migratorio definido + declarar taxes). Explícale que son necesarios para aplicar a Obamacare — no continúes la cotización si no los cumple.
+      </div>
+      <div id="script-transicion" class="script-box hidden">
+        <span class="quote">"Con esta información ya puedo empezar a buscarle las mejores opciones para usted. ¿Me comparte su código postal para ver qué le queda disponible en su zona?"</span>
+      </div>
+      <div id="resto-2" class="hidden">
+      <label for="zip">Código postal</label>
+      <input type="text" id="zip" maxlength="5" placeholder="Ej: 33101">
+      <div id="alerta-estado" class="alerta-box hidden">
+        ⚠️ No se pudo identificar el estado con ese código postal — verifícalo con el cliente.
+      </div>
+      <div id="ok-estado" class="hogar-calculado hidden"></div>
+      <div id="alerta-no-expandido" class="alerta-box hidden" style="border-left-color:#f87171;">
+        📍 Este estado <b>NO expandió Medicaid</b> — recuerda revisar el "vacío de cobertura" si el ingreso es muy bajo (Filtro 1).
+      </div>
+      <div id="alerta-si-expandido" class="hogar-calculado hidden">
+        📍 Este estado <b>SÍ expandió Medicaid</b> — si el ingreso es muy bajo, la persona probablemente califica para Medicaid en vez de un plan del Mercado (no hay "vacío de cobertura" aquí).
+      </div>
+
+      <div class="mini-traductor">
+        <div class="cotizante-label">📞 Verificar número telefónico (opcional)</div>
+        <div style="font-size:12px; color:#94a3b8; margin-bottom:6px;">Escribe el número del cliente (con o sin +1) para confirmar que sea de EE.UU. y ver de qué estado es.</div>
+        <input type="text" id="telefono-input" placeholder="Ej: +1 305 555 0182 o 3055550182">
+        <div id="telefono-resultado" class="traductor-resultado"></div>
+      </div>
+      <label>¿Todos los miembros del hogar tienen el MISMO estatus migratorio, o es diferente entre ellos (ej. uno tiene social y otro no)?</label>
+      <div class="opciones" id="op-hogar-mixto">
+        <label class="opcion"><input type="radio" name="hogarmixto" value="no" checked>Mismo estatus todos</label>
+        <label class="opcion"><input type="radio" name="hogarmixto" value="si">Es diferente (hogar mixto)</label>
+      </div>
+      <div id="pregunta-titular-alterno" class="hidden">
+        <label>¿Hay AL MENOS UNA persona en ese mismo hogar (aunque no sea con quien hablas ahora) que SÍ tenga estatus migratorio válido?</label>
+        <div class="opciones" id="op-titular-alterno">
+          <label class="opcion"><input type="radio" name="titularalterno" value="si" checked>Sí, alguien más del hogar sí tiene estatus válido</label>
+          <label class="opcion"><input type="radio" name="titularalterno" value="no">No, nadie en el hogar tiene estatus válido</label>
+        </div>
+      </div>
+      <div id="alerta-hogar-mixto-si" class="alerta-box hidden">
+        ✅ <b>Sí se puede ofrecer un plan.</b> La persona del hogar con estatus válido puede ser el <b>titular</b> del seguro — no tiene que ser con quien estás hablando ahora. El ingreso que se usa sigue siendo el del hogar fiscal completo (todos los que declaran juntos), no solo el de esa persona.<br><br>
+        <b>Qué hacer AHORA en la llamada:</b> <span class="quote">"Qué bueno, entonces sí podemos avanzar. ¿Esa persona está disponible en este momento para continuar con ella, o prefiere que agendemos una llamada para cuando ambos puedan estar juntos?"</span><br>
+        Si está disponible ahora: vuelve al Paso 3 de arriba y cambia el "estatus migratorio" para que refleje el de ESA persona, y continúa la cotización normalmente con ella como titular.<br>
+        Si no está disponible: agenda la llamada de seguimiento con día y hora concretos antes de colgar.
+      </div>
+      <div id="alerta-hogar-mixto-no" class="alerta-box hidden">
+        📝 Si nadie en el hogar tiene estatus migratorio válido, no hay quién pueda ser titular de un plan Marketplace por ahora. Guión: <span class="quote">"Entiendo su situación, y quiero ayudarle apenas se pueda. Voy a tomar nota de su información, y en cuanto haya un cambio en su estatus migratorio, lo vuelvo a contactar con las opciones disponibles."</span>
+      </div>
+    </div>
+    </div>
+
+    <div id="resto-3" class="hidden">
+    <!-- PASO 4: NUCLEO FAMILIAR EN TAXES -->
+    <div class="paso" data-tab="2">
+      <div class="paso-title"><span class="paso-num p4">4</span>Núcleo familiar en los Taxes</div>
+      <div class="script-box"><span class="quote">"Con gusto le ayudo a verlo bien — cuénteme, ¿cómo está compuesto su hogar en los Taxes? Por ejemplo: esposa y 2 hijos."</span></div>
+      <label>¿Está casado(a), o tiene pareja con quien presenta la declaración de impuestos en conjunto (aunque no se hayan casado formalmente en EE.UU.)?</label>
+      <div class="opciones" id="op-casado">
+        <label class="opcion"><input type="radio" name="casado" value="si">Sí</label>
+        <label class="opcion"><input type="radio" name="casado" value="no" checked>No</label>
+      </div>
+      <div class="script-box" style="font-size:12px;">💡 Lo que importa aquí es si <b>declaran impuestos juntos</b>, no solo si hay matrimonio formal — marca "Sí" también si su pareja entra en su declaración de Taxes, aunque no se hayan casado legalmente en EE.UU.</div>
+      <div id="declaracion-conjunta-block" class="hidden">
+        <label>¿Declaran taxes juntos (declaración conjunta)?</label>
+        <div class="opciones" id="op-declaracion">
+          <label class="opcion"><input type="radio" name="declaracion" value="si" checked>Sí, conjunta</label>
+          <label class="opcion"><input type="radio" name="declaracion" value="no">No, por separado</label>
+        </div>
+      </div>
+      <div id="alerta-separado" class="alerta-box hidden">
+        ⚠️ Declarar por separado (Married Filing Separately) generalmente <b>excluye del subsidio</b>. Existen excepciones legales, pero no basta con que el cliente diga que aplica una — sin la documentación clara, no ofrezcas un plan con subsidio todavía. Usa este guión: <span class="quote">"Entiendo, y quiero asegurarme de ayudarle de la mejor forma. Voy a tomar nota de su información, y en cuanto se confirme si aplica alguna excepción a su caso, lo vuelvo a contactar con las opciones disponibles."</span>
+      </div>
+      <label for="dependientes">¿Cuántos dependientes reclama en sus Taxes (hijos, etc.)?</label>
+      <div class="script-box">💡 Cuenta aquí a <b>cualquier persona que reclame como dependiente en sus impuestos</b>, sin importar la edad — incluye hijos adultos con alguna discapacidad permanente si el cliente los reclama como dependientes.</div>
+      <input type="number" id="dependientes" min="0" max="10" value="0">
+      <div class="hogar-calculado" id="hogar-calculado"></div>
+    </div>
+
+    <!-- PASO 5: INGRESOS -->
+    <div class="paso" data-tab="2">
+      <div class="paso-title"><span class="paso-num p5">5</span>Edad y cotizantes del hogar</div>
+      <div class="script-box"><span class="quote">"Ahora, para poder ayudarle a encontrar la mejor opción, cuénteme: ¿cuál es su promedio de ingresos? ¿Trabaja en un solo empleo o tiene más de uno? ¿Es por W2 (empleado) o cuenta propia 1099?"</span></div>
+      <div class="script-box" style="border-left-color:#fbbf24;">
+        💡 <b>Si el cliente no sabe qué es "W2" o "1099", pregúntale esto para confirmarlo:</b><br>
+        <span class="quote">"¿Le pagan con cheque o depósito, y le hacen descuentos/deducciones automáticas en cada pago? ¿O le pagan en efectivo, o con cheque pero sin ningún descuento?"</span><br><br>
+        <b>Con descuentos automáticos en cada pago</b> → normalmente es <b>W2</b>.<br>
+        <b>Sin descuentos (efectivo, cheque completo, o factura lo que hace)</b> → normalmente es <b>1099</b>.
+      </div>
+      <label>Edad del solicitante principal</label>
+      <input type="number" id="edad" min="18" max="100" value="30">
+
+      <div class="mini-traductor">
+        <div class="cotizante-label">🌐 Mini-traductor de ocupación (opcional)</div>
+        <div style="font-size:12px; color:#94a3b8; margin-bottom:6px;">Si el cliente responde en inglés (o lo escribes como suene), escríbelo aquí para ver la traducción.</div>
+        <input type="text" id="traductor-input" placeholder="Ej: construction worker, cook, driver...">
+        <div id="traductor-resultado" class="traductor-resultado"></div>
+      </div>
+
+      <div class="script-box" style="border-left-color:#fbbf24;">
+        🧮 <b>Calculadora de apoyo (no es el cotizador oficial):</b><br>
+        • Registra los ingresos <b>tal como la persona los declara en su declaración de impuestos</b>, no necesariamente cada fuente de ingreso que mencione — pregúntale específicamente cuáles reporta en sus Taxes.<br>
+        • Si una misma persona tiene 2 empleos y declara ambos, no la agregues 2 veces — usa "Empleo 1" y "Empleo 2" dentro de su misma tarjeta (marca el check "¿Tiene un segundo empleo?").
+      </div>
+
+      <div id="cotizantes-container"></div>
+
+      <button type="button" id="btn-agregar-cotizante" class="btn-agregar">＋ Agregar cotizante</button>
+
+      <div class="ingreso-calculado" id="ingreso-calculado"></div>
+    </div>
+
+    <div id="resto-4" class="hidden">
+    <!-- PASO 6: CREDITO FISCAL Y PERFIL DE SALUD -->
+    <div class="paso" data-tab="3">
+      <div class="paso-title"><span class="paso-num p6">6</span>Crédito fiscal y perfil de salud</div>
+      <label>¿Con qué frecuencia cree que usará el seguro / tiene prescripciones médicas?</label>
+      <div class="opciones" id="op-salud">
+        <label class="opcion"><input type="radio" name="salud" value="bajo" checked>Casi nunca / solo emergencias</label>
+        <label class="opcion"><input type="radio" name="salud" value="medio">Chequeos de rutina, 2-3 veces al año</label>
+        <label class="opcion"><input type="radio" name="salud" value="alto">Condición crónica, prescripciones, cirugía o embarazo</label>
+      </div>
+    </div>
+
+    <div class="resultado-final" id="resultado" data-tab="3">
+      <div class="resultado-label">Resultado — nivel de ayuda y plan sugerido</div>
+      <div class="resultado-metal" id="res-metal">—</div>
+      <div class="resultado-sub" id="res-sub"></div>
+      <div class="fpl-gauge-wrap" id="fpl-gauge"></div>
+    </div>
+
+    <!-- PASO 7: OPCIONES Y ASEGURADORAS -->
+    <div class="paso" data-tab="4">
+      <div class="paso-title"><span class="paso-num p7">7</span>Brindar mínimo 2 opciones</div>
+      <div class="script-box">
+        <span class="quote">"Con la información que me dio, usted sí califica para recibir ayuda del gobierno cada mes — eso es una buena noticia. Vamos a revisar juntos al menos 2 opciones, con calma, para que usted decida cuál le conviene más."</span><br><br>
+        <b>Aseguradoras autorizadas para buscar en el cotizador (según disponibilidad en su estado):</b> Ambetter, Oscar, Aetna, Cigna, Molina, United.<br>
+        Explica siempre: <b>prima mensual</b>, <b>deducible</b> y <b>gasto máximo de bolsillo</b> de cada opción.
+      </div>
+    </div>
+
+    <!-- PASO 8: RECOPILACION DE DATOS -->
+    <div class="paso" data-tab="4">
+      <div class="paso-title"><span class="paso-num p8">8</span>Recopilación de datos y consentimiento</div>
+      <div class="checklist-box">
+        <b>Por cada persona que quiere seguro, confirma:</b><br>
+        ☐ Nombre y apellido completo (deletreado)<br>
+        ☐ Dirección · Correo electrónico<br>
+        ☐ Fecha de nacimiento · Nacionalidad<br>
+        ☐ Teléfono principal · Teléfono adicional<br>
+        ☐ Estatus migratorio<br>
+        ☐ Número de seguro social (o fecha proyectada si está en trámite)<br><br>
+        <b>Por cada persona que NO quiere seguro (ej. cónyuge o hijo que declina):</b><br>
+        ☐ Solo nombre y apellido + fecha de nacimiento<br><br>
+        <b>Antes de cerrar:</b><br>
+        ☐ Pregunta de seguridad (ej. "¿cuál es su película favorita?") — explícale que solo un agente que la sepa puede tocar su póliza después.<br>
+        ☐ Leer en voz alta el resumen completo (aseguradora, prima, deducible, gasto máximo, dependientes) y confirmar con Sí/No.<br>
+        ☐ Confirmar que autoriza a la agencia a gestionar su póliza durante la vigencia.<br>
+        ☐ Confirmar medio de contacto preferido (correo, llamada, SMS o WhatsApp).
+      </div>
+      <div class="script-box">
+        <span class="quote">"Ya casi terminamos, y quiero que todo le quede clarísimo: en los próximos 3 días el mercado de salud le va a pedir subir la foto de su estatus migratorio y prueba de ingresos. Sobre ingresos nosotros lo ayudamos, pero el documento de estatus migratorio nos lo envía usted por correo o texto a nuestra línea de atención."</span><br><br>
+        <span class="quote">"Con mucho gusto, sus tarjetas de salud llegarán en 15 días hábiles y el plan queda activo el día 1 del mes siguiente. Si por algo no le llegan, contáctenos y lo resolvemos enseguida."</span>
+      </div>
+      <div class="script-box" style="border-left-color:#fbbf24;">
+        ⚠️ <b>Nunca omitas este aviso — es un requisito real, no solo cortesía:</b><br>
+        <span class="quote">"Y algo muy importante para cuidarlo a usted: por favor avísenos de inmediato si algo cambia — si se casa, se divorcia, tiene un hijo, cambia de ingreso, consigue otro trabajo, o se muda, incluso si es a otra dirección dentro del mismo estado. Tiene 30 días para reportarlo. Se lo digo porque no quiero que le vaya a pasar que termine debiendo dinero al gobierno el año que viene, o que pierda la ayuda que tiene ahora. Cuente con nosotros apenas pase algo de esto, así sea un cambio pequeño."</span>
+      </div>
+    </div>
+
+    <div class="resumen-final" id="resumen-cotizador" data-tab="4">
+      <div class="resumen-titulo">📋 Resumen para el cotizador real (cópialo directo)</div>
+      <div id="resumen-contenido"></div>
+      <button type="button" id="btn-copiar-resumen" class="btn-agregar">📋 Copiar resumen</button>
+      <div id="copiado-msg" class="copiado-msg hidden">✅ ¡Copiado! Pégalo en el cotizador.</div>
+    </div>
+    </div>
+    </div>
+    </div>
+
+    <footer>Basado en el guión de Open American Insurance + guías federales de pobreza para cobertura 2026. El crédito fiscal exacto en dólares lo calcula el cotizador real (Marketplace).</footer>
+  </div>
+
+  <script>
+    var diccionarioOcupaciones = {
+      // Construcción y oficios
+      'construction worker': 'Trabajador de construcción', 'construction': 'Construcción', 'laborer': 'Obrero(a)', 'general laborer': 'Obrero(a) general',
+      'foreman': 'Capataz', 'general contractor': 'Contratista general', 'contractor': 'Contratista',
+      'roofer': 'Techador(a)', 'roofing': 'Techos', 'drywall installer': 'Instalador(a) de tablaroca', 'drywall': 'Tablaroca',
+      'mason': 'Albañil', 'bricklayer': 'Albañil', 'concrete worker': 'Trabajador(a) de concreto',
+      'framer': 'Instalador(a) de estructuras', 'flooring installer': 'Instalador(a) de pisos', 'tile installer': 'Instalador(a) de azulejos / baldosas',
+      'insulation installer': 'Instalador(a) de aislamiento', 'glazier': 'Instalador(a) de vidrios', 'ironworker': 'Trabajador(a) de estructuras metálicas',
+      'crane operator': 'Operador(a) de grúa', 'forklift operator': 'Operador(a) de montacargas', 'heavy equipment operator': 'Operador(a) de maquinaria pesada',
+      'electrician': 'Electricista', 'plumber': 'Plomero', 'mechanic': 'Mecánico', 'hvac technician': 'Técnico(a) de aire acondicionado', 'hvac': 'Aire acondicionado / calefacción',
+      'painter': 'Pintor(a)', 'carpenter': 'Carpintero', 'handyman': 'Trabajador(a) de mantenimiento general',
+      'landscaper': 'Jardinero(a)', 'gardener': 'Jardinero(a)', 'lawn care': 'Cuidado de jardines',
+      'welder': 'Soldador(a)', 'machine operator': 'Operador(a) de máquinas', 'mover': 'Trabajador(a) de mudanzas',
+      'pool installer': 'Instalador(a) de piscinas', 'fence installer': 'Instalador(a) de cercas',
+
+      // Comida y restaurantes
+      'cook': 'Cocinero(a)', 'chef': 'Chef / Cocinero(a)', 'kitchen helper': 'Ayudante de cocina', 'line cook': 'Cocinero(a) de línea', 'prep cook': 'Cocinero(a) de preparación',
+      'dishwasher': 'Lavaplatos', 'dish washer': 'Lavaplatos', 'food prep': 'Preparador(a) de alimentos',
+      'waiter': 'Mesero', 'waitress': 'Mesera', 'server': 'Mesero(a)', 'bartender': 'Cantinero(a)', 'busser': 'Ayudante de meseros',
+      'host': 'Anfitrión(a)', 'hostess': 'Anfitriona', 'food service': 'Servicio de alimentos', 'fast food': 'Comida rápida', 'restaurant worker': 'Trabajador(a) de restaurante',
+      'baker': 'Panadero(a)', 'butcher': 'Carnicero(a)', 'barista': 'Barista', 'caterer': 'Servicio de banquetes',
+
+      // Hotelería y turismo (clave en Florida)
+      'hotel worker': 'Trabajador(a) de hotel', 'hospitality': 'Hotelería', 'front desk': 'Recepción de hotel', 'concierge': 'Conserje de hotel',
+      'bellhop': 'Botones de hotel', 'pool attendant': 'Encargado(a) de piscina', 'lifeguard': 'Salvavidas',
+      'tour guide': 'Guía turístico(a)', 'theme park worker': 'Trabajador(a) de parque temático', 'ride operator': 'Operador(a) de atracciones',
+      'ticket agent': 'Agente de boletos', 'cruise ship worker': 'Trabajador(a) de crucero', 'valet': 'Valet parking', 'parking attendant': 'Encargado(a) de estacionamiento',
+
+      // Limpieza
+      'cleaner': 'Persona de limpieza', 'housekeeper': 'Empleada doméstica', 'housekeeping': 'Limpieza / Ama de llaves', 'cleaning': 'Limpieza',
+      'maid': 'Empleada doméstica', 'custodian': 'Conserje', 'janitor': 'Conserje', 'window cleaner': 'Limpiador(a) de ventanas',
+      'pool cleaner': 'Limpiador(a) de piscinas', 'pest control': 'Control de plagas',
+
+      // Cuidado y salud
+      'caregiver': 'Cuidador(a)', 'nanny': 'Niñera', 'babysitter': 'Niñera', 'elderly care': 'Cuidado de adultos mayores',
+      'nurse': 'Enfermero(a)', 'nursing assistant': 'Asistente de enfermería', 'home health aide': 'Auxiliar de salud en el hogar', 'cna': 'Auxiliar de enfermería certificado(a)',
+      'medical assistant': 'Asistente médico(a)', 'dental assistant': 'Asistente dental', 'pharmacy technician': 'Técnico(a) de farmacia',
+
+      // Transporte y logística
+      'driver': 'Conductor(a) / Chofer', 'truck driver': 'Conductor de camión', 'delivery driver': 'Repartidor(a)', 'rideshare driver': 'Conductor(a) de plataforma (Uber/Lyft)',
+      'bus driver': 'Conductor(a) de autobús', 'warehouse worker': 'Trabajador(a) de bodega/almacén', 'dock worker': 'Trabajador(a) de muelle',
+      'packer': 'Empacador(a)', 'shipping clerk': 'Empleado(a) de envíos',
+
+      // Agricultura y ganadería (clave en Texas)
+      'farmer': 'Agricultor(a)', 'farm worker': 'Trabajador(a) agrícola', 'picker': 'Recolector(a) de cosecha', 'agriculture': 'Agricultura',
+      'rancher': 'Ranchero(a)', 'ranch hand': 'Trabajador(a) de rancho', 'nursery worker': 'Trabajador(a) de vivero', 'packing house worker': 'Trabajador(a) de empacadora',
+
+      // Petróleo y gas (clave en Texas)
+      'oil field worker': 'Trabajador(a) de campo petrolero', 'rig worker': 'Trabajador(a) de plataforma petrolera', 'pipeline worker': 'Trabajador(a) de oleoducto',
+
+      // Retail y ventas
+      'cashier': 'Cajero(a)', 'retail': 'Ventas al por menor', 'sales': 'Ventas', 'salesperson': 'Vendedor(a)', 'store clerk': 'Empleado(a) de tienda',
+      'stock clerk': 'Empleado(a) de inventario', 'merchandiser': 'Mercaderista',
+
+      // Fábrica y manufactura
+      'factory worker': 'Trabajador(a) de fábrica', 'assembly line worker': 'Trabajador(a) de línea de ensamblaje', 'quality control': 'Control de calidad',
+
+      // Servicios personales
+      'barber': 'Barbero', 'hairdresser': 'Estilista / Peluquero(a)', 'hair stylist': 'Estilista', 'nail technician': 'Manicurista', 'manicurist': 'Manicurista',
+      'esthetician': 'Esteticista', 'massage therapist': 'Masajista', 'seamstress': 'Costurera', 'tailor': 'Sastre', 'dry cleaner': 'Tintorería',
+
+      // Oficina y administrativo
+      'receptionist': 'Recepcionista', 'secretary': 'Secretario(a)', 'administrative assistant': 'Asistente administrativo(a)',
+      'data entry': 'Captura de datos', 'customer service': 'Servicio al cliente', 'call center': 'Centro de llamadas',
+
+      // Educación y cuidado infantil
+      'teacher': 'Maestro(a) / Profesor(a)', 'assistant': 'Asistente', 'teacher assistant': 'Asistente de maestro(a)', 'daycare worker': 'Trabajador(a) de guardería',
+
+      // Otros comunes
+      'manager': 'Gerente', 'supervisor': 'Supervisor(a)', 'security guard': 'Guardia de seguridad',
+      'unemployed': 'Desempleado(a)', 'self employed': 'Trabajador(a) independiente / cuenta propia', 'self-employed': 'Trabajador(a) independiente / cuenta propia', 'independent contractor': 'Contratista independiente',
+      'stay at home mom': 'Ama de casa', 'housewife': 'Ama de casa', 'homemaker': 'Ama de casa',
+      'student': 'Estudiante', 'retired': 'Jubilado(a) / Retirado(a)',
+      'accountant': 'Contador(a)', 'engineer': 'Ingeniero(a)', 'programmer': 'Programador(a)'
+    };
+
+    // Indicativos (códigos de área) de Canadá — para distinguir de EE.UU. dentro del mismo +1 (NANP)
+    var indicativosCanada = {
+      '204':'Manitoba', '226':'Ontario', '236':'Columbia Británica', '249':'Ontario', '250':'Columbia Británica',
+      '263':'Quebec', '289':'Ontario', '306':'Saskatchewan', '343':'Ontario', '354':'Quebec', '365':'Ontario',
+      '367':'Quebec', '368':'Alberta', '403':'Alberta', '416':'Ontario', '418':'Quebec', '431':'Manitoba',
+      '437':'Ontario', '438':'Quebec', '450':'Quebec', '468':'Quebec', '474':'Saskatchewan', '506':'New Brunswick',
+      '514':'Quebec', '519':'Ontario', '548':'Ontario', '579':'Quebec', '581':'Quebec', '587':'Alberta',
+      '604':'Columbia Británica', '613':'Ontario', '639':'Saskatchewan', '647':'Ontario', '672':'Columbia Británica',
+      '683':'Ontario', '705':'Ontario', '709':'Terranova y Labrador', '742':'Ontario', '778':'Columbia Británica',
+      '780':'Alberta', '782':'Nueva Escocia', '807':'Ontario', '819':'Quebec', '825':'Alberta', '867':'Territorios (Yukón/TNO/Nunavut)',
+      '873':'Quebec', '902':'Nueva Escocia / PEI', '905':'Ontario'
+    };
+    // Áreas de EE.UU. más comunes en TX/FL para referencia rápida (no exhaustivo)
+    var indicativosUSAComun = {
+      '305':'Miami, FL', '786':'Miami, FL', '954':'Fort Lauderdale, FL', '407':'Orlando, FL', '813':'Tampa, FL',
+      '561':'West Palm Beach, FL', '904':'Jacksonville, FL', '239':'Fort Myers, FL', '850':'Tallahassee, FL',
+      '214':'Dallas, TX', '469':'Dallas, TX', '972':'Dallas, TX', '713':'Houston, TX', '281':'Houston, TX',
+      '832':'Houston, TX', '210':'San Antonio, TX', '512':'Austin, TX', '915':'El Paso, TX', '956':'Laredo/RGV, TX'
+    };
+
+    function verificarTelefono() {
+      var input = (document.getElementById('telefono-input').value || '').replace(/\D/g, '');
+      var resultado = document.getElementById('telefono-resultado');
+      if (!input) { resultado.innerHTML = ''; return; }
+      // Quitar el 1 inicial si viene con código de país
+      if (input.length === 11 && input[0] === '1') input = input.substring(1);
+      if (input.length !== 10) {
+        resultado.innerHTML = '❓ Escribe un número de 10 dígitos (con o sin +1).';
+        return;
+      }
+      var indicativo = input.substring(0, 3);
+      resultado.className = 'traductor-resultado';
+      resultado.style.cssText = '';
+      if (indicativosCanada[indicativo]) {
+        resultado.className = 'traductor-resultado alerta-box';
+        resultado.style.marginTop = '8px';
+        resultado.innerHTML = '🛑 <b>NO CONTINÚES — este número es de Canadá</b> (indicativo ' + indicativo + ', ' + indicativosCanada[indicativo] + '), no de EE.UU. Obamacare solo aplica a personas residentes en Estados Unidos — este contacto no califica.';
+      } else if (indicativosUSAComun[indicativo]) {
+        resultado.innerHTML = '✅ Número de EE.UU. — indicativo ' + indicativo + ' (' + indicativosUSAComun[indicativo] + ').';
+        resultado.style.color = '#4ade80';
+      } else {
+        resultado.innerHTML = '✅ Parece número de EE.UU. (indicativo ' + indicativo + '), pero no está en nuestra lista rápida de TX/FL — confírmalo con el cliente si hace falta.';
+        resultado.style.color = '#4ade80';
+      }
+    }
+
+
+    function traducirOcupacion() {
+      var input = (document.getElementById('traductor-input').value || '').trim().toLowerCase();
+      var resultado = document.getElementById('traductor-resultado');
+      if (!input) { resultado.textContent = ''; return; }
+      if (diccionarioOcupaciones[input]) {
+        resultado.textContent = '➡️ ' + diccionarioOcupaciones[input];
+        return;
+      }
+      var coincidencias = Object.keys(diccionarioOcupaciones).filter(function(k) {
+        return k.indexOf(input) !== -1 || input.indexOf(k) !== -1;
+      });
+      if (coincidencias.length) {
+        resultado.textContent = '➡️ ' + coincidencias.map(function(k) { return diccionarioOcupaciones[k]; }).join(' / ');
+      } else {
+        resultado.innerHTML = '❓ No está en la lista. Pregúntale: <b>"¿A qué sector se dedica: construcción, hotelería/turismo, restaurantes, limpieza, salud/cuidado de personas, transporte, ventas, oficina, fábrica, agricultura, belleza, o seguridad?"</b> — esa respuesta ya te sirve para clasificarlo, sin necesitar la palabra exacta en inglés.';
+      }
+    }
+
+    var cotizantes = [{ id: 1, nombre: '', montoE1: '', frecuenciaE1: '12', tipoE1: 'w2', deducibleE1: '', modoE1: 'estandar', periodosE1: [], tieneEmpleo2: false, montoE2: '', frecuenciaE2: '12', tipoE2: 'w2', deducibleE2: '', modoE2: 'estandar', periodosE2: [] }];
+    var siguienteId = 2;
+    var siguientePeriodoId = 2;
+
+    function leerPeriodosDesdeDOM(cid, sufijo) {
+      var contenedor = document.getElementById('periodos-' + cid + '-' + sufijo);
+      if (!contenedor) return [];
+      var bloques = contenedor.querySelectorAll('.periodo-bloque');
+      var periodos = [];
+      bloques.forEach(function(bloque) {
+        var pid = bloque.getAttribute('data-pid');
+        var pref = cid + '-' + sufijo + '-' + pid;
+        periodos.push({
+          pid: parseInt(pid, 10),
+          desde: (document.getElementById('periodo-desde-' + pref) || {}).value || '0',
+          hasta: (document.getElementById('periodo-hasta-' + pref) || {}).value || '0',
+          metodo: (document.querySelector('input[name=periodo-metodo-' + pref + ']:checked') || {}).value || 'fijo',
+          valorFijo: (document.getElementById('periodo-fijo-' + pref) || {}).value || '',
+          valorSemanal: (document.getElementById('periodo-semanal-' + pref) || {}).value || '',
+          tarifaHora: (document.getElementById('periodo-tarifahora-' + pref) || {}).value || '',
+          horasSemana: (document.getElementById('periodo-horassemana-' + pref) || {}).value || ''
+        });
+      });
+      return periodos;
+    }
+
+    function sincronizarCotizantesDesdeDOM() {
+      cotizantes.forEach(function(c) {
+        var nombreEl = document.getElementById('nombre-' + c.id);
+        if (nombreEl) c.nombre = nombreEl.value;
+
+        var montoE1El = document.getElementById('monto-' + c.id + '-e1');
+        var frecuenciaE1El = document.getElementById('frecuencia-' + c.id + '-e1');
+        var tipoE1El = document.querySelector('input[name=tipo-' + c.id + '-e1]:checked');
+        var deducibleE1El = document.getElementById('deducible-' + c.id + '-e1');
+        var modoE1El = document.querySelector('input[name=modo-' + c.id + '-e1]:checked');
+        if (montoE1El) c.montoE1 = montoE1El.value;
+        if (frecuenciaE1El) c.frecuenciaE1 = frecuenciaE1El.value;
+        if (tipoE1El) c.tipoE1 = tipoE1El.value;
+        if (deducibleE1El) c.deducibleE1 = deducibleE1El.value;
+        if (modoE1El) c.modoE1 = modoE1El.value;
+        c.periodosE1 = leerPeriodosDesdeDOM(c.id, 'e1');
+
+        var tieneEmpleo2El = document.getElementById('tiene-empleo2-' + c.id);
+        if (tieneEmpleo2El) c.tieneEmpleo2 = tieneEmpleo2El.checked;
+        var montoE2El = document.getElementById('monto-' + c.id + '-e2');
+        var frecuenciaE2El = document.getElementById('frecuencia-' + c.id + '-e2');
+        var tipoE2El = document.querySelector('input[name=tipo-' + c.id + '-e2]:checked');
+        var deducibleE2El = document.getElementById('deducible-' + c.id + '-e2');
+        var modoE2El = document.querySelector('input[name=modo-' + c.id + '-e2]:checked');
+        if (montoE2El) c.montoE2 = montoE2El.value;
+        if (frecuenciaE2El) c.frecuenciaE2 = frecuenciaE2El.value;
+        if (tipoE2El) c.tipoE2 = tipoE2El.value;
+        if (deducibleE2El) c.deducibleE2 = deducibleE2El.value;
+        if (modoE2El) c.modoE2 = modoE2El.value;
+        c.periodosE2 = leerPeriodosDesdeDOM(c.id, 'e2');
+      });
+    }
+
+    var MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+    function periodoBloqueHTML(cid, sufijo, p, idx) {
+      var pref = cid + '-' + sufijo + '-' + p.pid;
+      var desde = parseInt(p.desde || '0', 10);
+      var hasta = parseInt(p.hasta || '0', 10);
+      var meses = Math.max(1, hasta - desde + 1);
+      var semanas = Math.round(meses * 52 / 12);
+      var metodo = p.metodo || 'fijo';
+      var opcionesMes = function(seleccionado) {
+        return MESES.map(function(m, i) {
+          return '<option value="' + i + '"' + (i === seleccionado ? ' selected' : '') + '>' + m + '</option>';
+        }).join('');
+      };
+      return '' +
+        '<div class="periodo-bloque cotizante-card" data-pid="' + p.pid + '" style="margin-top:10px;">' +
+          '<div class="cotizante-header">' +
+            '<span class="cotizante-label">📅 Período ' + (idx + 1) + '</span>' +
+            '<button type="button" class="btn-quitar" data-quitar-periodo="' + cid + '|' + sufijo + '|' + p.pid + '">✕ Quitar</button>' +
+          '</div>' +
+          '<div class="opciones-inline" style="display:flex; gap:8px;">' +
+            '<div style="flex:1;"><label>Desde</label><select id="periodo-desde-' + pref + '">' + opcionesMes(desde) + '</select></div>' +
+            '<div style="flex:1;"><label>Hasta</label><select id="periodo-hasta-' + pref + '">' + opcionesMes(hasta) + '</select></div>' +
+          '</div>' +
+          '<div style="font-size:11.5px; color:#94a3b8; margin-top:4px;">' + meses + ' mes' + (meses > 1 ? 'es' : '') + ' · ' + semanas + ' sem</div>' +
+          '<label>¿Cómo lo reportó?</label>' +
+          '<div class="opciones-inline" style="display:flex; gap:6px;">' +
+            '<label class="opcion" style="flex:1; justify-content:center;"><input type="radio" name="periodo-metodo-' + pref + '" value="fijo"' + (metodo === 'fijo' ? ' checked' : '') + '>Monto fijo</label>' +
+            '<label class="opcion" style="flex:1; justify-content:center;"><input type="radio" name="periodo-metodo-' + pref + '" value="semanal"' + (metodo === 'semanal' ? ' checked' : '') + '>Semanal</label>' +
+            '<label class="opcion" style="flex:1; justify-content:center;"><input type="radio" name="periodo-metodo-' + pref + '" value="hora"' + (metodo === 'hora' ? ' checked' : '') + '>Por hora</label>' +
+          '</div>' +
+          '<div id="periodo-campo-fijo-' + pref + '" class="' + (metodo === 'fijo' ? '' : 'hidden') + '">' +
+            '<label>Monto total del período</label>' +
+            '<input type="number" id="periodo-fijo-' + pref + '" min="0" step="10" placeholder="Ej: 2000" value="' + (p.valorFijo || '') + '">' +
+          '</div>' +
+          '<div id="periodo-campo-semanal-' + pref + '" class="' + (metodo === 'semanal' ? '' : 'hidden') + '">' +
+            '<label>Ingreso semanal</label>' +
+            '<input type="number" id="periodo-semanal-' + pref + '" min="0" step="10" placeholder="Ej: 500" value="' + (p.valorSemanal || '') + '">' +
+          '</div>' +
+          '<div id="periodo-campo-hora-' + pref + '" class="' + (metodo === 'hora' ? '' : 'hidden') + '">' +
+            '<label>Tarifa por hora</label>' +
+            '<input type="number" id="periodo-tarifahora-' + pref + '" min="0" step="0.5" placeholder="Ej: 15" value="' + (p.tarifaHora || '') + '">' +
+            '<label>Horas por semana</label>' +
+            '<input type="number" id="periodo-horassemana-' + pref + '" min="0" step="1" placeholder="Ej: 30" value="' + (p.horasSemana || '') + '">' +
+          '</div>' +
+          '<div class="subtotal-cotizante" id="periodo-ingreso-' + pref + '"></div>' +
+        '</div>';
+    }
+
+    function campoEmpleoHTML(cid, sufijo, c, tipo, monto, frecuencia, deducible, modo, periodos) {
+      var esVariable = modo === 'variable';
+      var periodosEfectivos = (periodos && periodos.length) ? periodos : [{ pid: 1, desde: '0', hasta: '0', metodo: 'fijo' }];
+      var periodosHTML = periodosEfectivos.map(function(p, idx) {
+        return periodoBloqueHTML(cid, sufijo, p, idx);
+      }).join('');
+      return '' +
+        '<label>Estimación del ingreso</label>' +
+        '<div class="opciones-inline" style="display:flex; gap:6px;">' +
+          '<label class="opcion" style="flex:1; justify-content:center;"><input type="radio" name="modo-' + cid + '-' + sufijo + '" value="estandar"' + (!esVariable ? ' checked' : '') + '>Estándar<br><span style="font-size:10.5px; color:#94a3b8;">Mismo monto todo el año</span></label>' +
+          '<label class="opcion" style="flex:1; justify-content:center;"><input type="radio" name="modo-' + cid + '-' + sufijo + '" value="variable"' + (esVariable ? ' checked' : '') + '>Variable<br><span style="font-size:10.5px; color:#94a3b8;">Por períodos del año</span></label>' +
+        '</div>' +
+        '<div id="modo-estandar-' + cid + '-' + sufijo + '" class="' + (esVariable ? 'hidden' : '') + '">' +
+          '<label>¿Cuánto le pagan por período?</label>' +
+          '<input type="number" id="monto-' + cid + '-' + sufijo + '" min="0" step="10" placeholder="Ej: 650" value="' + (monto || '') + '">' +
+          '<label>¿Cada cuánto le pagan?</label>' +
+          '<select id="frecuencia-' + cid + '-' + sufijo + '">' +
+            '<option value="52"' + (frecuencia === '52' ? ' selected' : '') + '>Cada semana (52 pagos al año)</option>' +
+            '<option value="26"' + (frecuencia === '26' ? ' selected' : '') + '>Cada 2 semanas / quincenal (26 pagos al año)</option>' +
+            '<option value="24"' + (frecuencia === '24' ? ' selected' : '') + '>2 veces al mes, ej. días 15 y 30 (24 pagos al año)</option>' +
+            '<option value="12"' + (!frecuencia || frecuencia === '12' ? ' selected' : '') + '>Una vez al mes (12 pagos al año)</option>' +
+            '<option value="1"' + (frecuencia === '1' ? ' selected' : '') + '>Ya me da el monto anual total</option>' +
+          '</select>' +
+        '</div>' +
+        '<div id="modo-variable-' + cid + '-' + sufijo + '" class="' + (esVariable ? '' : 'hidden') + '">' +
+          '<div style="font-size:11.5px; color:#94a3b8; margin-top:4px;">Suma tramos de meses según cómo ganó: monto fijo, semanal o por hora.</div>' +
+          '<div id="periodos-' + cid + '-' + sufijo + '">' + periodosHTML + '</div>' +
+          '<button type="button" class="btn-agregar" data-agregar-periodo="' + cid + '|' + sufijo + '" style="margin-top:8px;">＋ Agregar período</button>' +
+          '<div class="ingreso-calculado" id="variable-resumen-' + cid + '-' + sufijo + '"></div>' +
+        '</div>' +
+        '<label style="margin-top:14px;">Tipo de contrato</label>' +
+        '<div class="opciones opciones-inline">' +
+          '<label class="opcion"><input type="radio" name="tipo-' + cid + '-' + sufijo + '" value="w2"' + (tipo !== '1099' ? ' checked' : '') + '>W2 (sin deducibles)</label>' +
+          '<label class="opcion"><input type="radio" name="tipo-' + cid + '-' + sufijo + '" value="1099"' + (tipo === '1099' ? ' checked' : '') + '>1099 (con deducibles)</label>' +
+        '</div>' +
+        '<div id="pregunta-1099-' + cid + '-' + sufijo + '" class="script-box' + (tipo === '1099' ? '' : ' hidden') + '">' +
+          '<span class="quote">"¿Cuánto factura en total antes de gastos del negocio?"</span> — usa el monto <b>BRUTO</b>. Los gastos se restan abajo, en "Deducible anual".' +
+        '</div>' +
+        '<div id="deducible-block-' + cid + '-' + sufijo + '" class="' + (tipo === '1099' ? '' : 'hidden') + '">' +
+          '<label>Deducible anual del negocio</label>' +
+          '<input type="number" id="deducible-' + cid + '-' + sufijo + '" min="0" step="100" placeholder="Ej: 5000" value="' + (deducible || '') + '">' +
+          '<div id="validacion-deducible-' + cid + '-' + sufijo + '" class="deducible-hint"></div>' +
+          '<div class="deducible-hint" id="deducible-hint-' + cid + '-' + sufijo + '"></div>' +
+        '</div>';
+    }
+
+    function renderCotizantes() {
+      var container = document.getElementById('cotizantes-container');
+      container.innerHTML = cotizantes.map(function(c, i) {
+        return '' +
+          '<div class="cotizante-card">' +
+            '<div class="cotizante-header">' +
+              '<span class="cotizante-label">💼 Cotizante ' + (i + 1) + '</span>' +
+              (cotizantes.length > 1 ? '<button type="button" class="btn-quitar" data-quitar="' + c.id + '">✕ Quitar</button>' : '') +
+            '</div>' +
+            '<label>Nombre (opcional)</label>' +
+            '<input type="text" id="nombre-' + c.id + '" placeholder="Ej: Juan Pérez" value="' + (c.nombre || '') + '">' +
+            '<div class="empleo-subtitulo">Empleo 1</div>' +
+            campoEmpleoHTML(c.id, 'e1', c, c.tipoE1, c.montoE1, c.frecuenciaE1, c.deducibleE1, c.modoE1, c.periodosE1) +
+            '<div class="subtotal-cotizante" id="subtotal-' + c.id + '-e1"></div>' +
+            '<label class="opcion" style="max-width:280px; margin-top:10px;"><input type="checkbox" id="tiene-empleo2-' + c.id + '"' + (c.tieneEmpleo2 ? ' checked' : '') + '> ¿Tiene un segundo empleo? (en caso de que lo tenga)</label>' +
+            '<div id="empleo2-block-' + c.id + '" class="empleo2-block' + (c.tieneEmpleo2 ? '' : ' hidden') + '">' +
+              '<div class="empleo-subtitulo">Empleo 2</div>' +
+              campoEmpleoHTML(c.id, 'e2', c, c.tipoE2, c.montoE2, c.frecuenciaE2, c.deducibleE2, c.modoE2, c.periodosE2) +
+              '<div class="subtotal-cotizante" id="subtotal-' + c.id + '-e2"></div>' +
+            '</div>' +
+          '</div>';
+      }).join('');
+
+      container.querySelectorAll('[data-quitar]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          sincronizarCotizantesDesdeDOM();
+          var idQuitar = parseInt(btn.getAttribute('data-quitar'), 10);
+          cotizantes = cotizantes.filter(function(c) { return c.id !== idQuitar; });
+          renderCotizantes();
+          calcular();
+        });
+      });
+      container.querySelectorAll('input, select').forEach(function(el) {
+        el.addEventListener('input', calcular);
+        el.addEventListener('change', calcular);
+      });
+    }
+
+    // Rangos de prefijo ZIP (3 dígitos) por estado — aproximado, basado en tablas públicas de USPS
+    var zip3PorEstado = [
+      [0, 5, null], [6, 9, 'PR'], [10, 27, 'MA'], [28, 29, 'RI'], [30, 38, 'NH'],
+      [39, 39, 'ME'], [40, 49, 'ME'], [50, 59, 'VT'], [60, 69, 'CT'], [70, 89, 'NJ'],
+      [100, 149, 'NY'], [150, 196, 'PA'], [197, 199, 'DE'], [200, 205, 'DC'], [206, 219, 'MD'],
+      [220, 246, 'VA'], [247, 268, 'WV'], [270, 289, 'NC'], [290, 299, 'SC'], [300, 319, 'GA'],
+      [398, 399, 'GA'], [320, 349, 'FL'], [350, 369, 'AL'], [370, 385, 'TN'], [386, 397, 'MS'],
+      [400, 427, 'KY'], [430, 459, 'OH'], [460, 479, 'IN'], [480, 499, 'MI'], [500, 528, 'IA'],
+      [530, 549, 'WI'], [550, 567, 'MN'], [570, 577, 'SD'], [580, 588, 'ND'], [590, 599, 'MT'],
+      [600, 629, 'IL'], [630, 658, 'MO'], [660, 679, 'KS'], [680, 693, 'NE'], [700, 714, 'LA'],
+      [716, 729, 'AR'], [730, 749, 'OK'], [750, 799, 'TX'], [885, 885, 'TX'], [800, 816, 'CO'],
+      [820, 831, 'WY'], [832, 838, 'ID'], [840, 847, 'UT'], [850, 865, 'AZ'], [870, 884, 'NM'],
+      [889, 898, 'NV'], [900, 966, 'CA'], [967, 968, 'HI'], [969, 969, 'GU'], [970, 979, 'OR'],
+      [980, 994, 'WA'], [995, 999, 'AK']
+    ];
+    var nombresEstado = {
+      AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado',
+      CT:'Connecticut', DE:'Delaware', DC:'Washington D.C.', FL:'Florida', GA:'Georgia', HI:'Hawái',
+      ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Luisiana',
+      ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi',
+      MO:'Missouri', MT:'Montana', NE:'Nebraska', NV:'Nevada', NH:'New Hampshire', NJ:'New Jersey',
+      NM:'Nuevo México', NY:'Nueva York', NC:'Carolina del Norte', ND:'Dakota del Norte', OH:'Ohio',
+      OK:'Oklahoma', OR:'Oregón', PA:'Pensilvania', RI:'Rhode Island', SC:'Carolina del Sur',
+      SD:'Dakota del Sur', TN:'Tennessee', TX:'Texas', UT:'Utah', VT:'Vermont', VA:'Virginia',
+      WA:'Washington', WV:'Virginia Occidental', WI:'Wisconsin', WY:'Wyoming', PR:'Puerto Rico', GU:'Guam'
+    };
+    // Estados que NO han expandido Medicaid (verificado julio 2026: KFF, Becker's, healthinsurance.org)
+    var estadosSinExpansion = ['AL', 'FL', 'GA', 'KS', 'MS', 'SC', 'TN', 'TX', 'WI', 'WY'];
+
+    function buscarEstadoPorZip(zip) {
+      var prefijo = parseInt(zip.substring(0, 3), 10);
+      for (var i = 0; i < zip3PorEstado.length; i++) {
+        if (prefijo >= zip3PorEstado[i][0] && prefijo <= zip3PorEstado[i][1] && zip3PorEstado[i][2]) {
+          return zip3PorEstado[i][2];
+        }
+      }
+      return null;
+    }
+
+    function anguloParaValor(v, max) {
+      var clamped = Math.max(0, Math.min(v, max));
+      return 180 - (clamped / max) * 180;
+    }
+    function puntoEnCirculo(cx, cy, r, anguloGrados) {
+      var rad = anguloGrados * Math.PI / 180;
+      return { x: cx + r * Math.cos(rad), y: cy - r * Math.sin(rad) };
+    }
+    function arcoPath(cx, cy, r, anguloInicio, anguloFin) {
+      var p1 = puntoEnCirculo(cx, cy, r, anguloInicio);
+      var p2 = puntoEnCirculo(cx, cy, r, anguloFin);
+      return 'M ' + p1.x.toFixed(2) + ' ' + p1.y.toFixed(2) + ' A ' + r + ' ' + r + ' 0 0 1 ' + p2.x.toFixed(2) + ' ' + p2.y.toFixed(2);
+    }
+    function construirGaugeSVG(porcentaje) {
+      var max = 500, cx = 100, cy = 95, r = 78;
+      var zonas = [
+        { desde: 0, hasta: 100, color: '#f87171' },
+        { desde: 100, hasta: 250, color: '#4ade80' },
+        { desde: 250, hasta: 400, color: '#fbbf24' },
+        { desde: 400, hasta: 500, color: '#f87171' }
+      ];
+      var arcos = zonas.map(function(z) {
+        var a1 = anguloParaValor(z.desde, max);
+        var a2 = anguloParaValor(z.hasta, max);
+        return '<path d="' + arcoPath(cx, cy, r, a1, a2) + '" stroke="' + z.color + '" stroke-width="16" fill="none" stroke-linecap="butt"/>';
+      }).join('');
+      var marcas = [0, 100, 250, 400, 500].map(function(v) {
+        var p = puntoEnCirculo(cx, cy, r + 16, anguloParaValor(v, max));
+        return '<text x="' + p.x.toFixed(1) + '" y="' + p.y.toFixed(1) + '" font-size="11" fill="#94a3b8" text-anchor="middle">' + v + '</text>';
+      }).join('');
+      var anguloAguja = anguloParaValor(porcentaje, max);
+      var puntaAguja = puntoEnCirculo(cx, cy, r - 18, anguloAguja);
+      var aguja = '<line x1="' + cx + '" y1="' + cy + '" x2="' + puntaAguja.x.toFixed(2) + '" y2="' + puntaAguja.y.toFixed(2) + '" stroke="#e2e8f0" stroke-width="3" stroke-linecap="round"/>' +
+        '<circle cx="' + cx + '" cy="' + cy + '" r="6" fill="#e2e8f0"/>';
+      return '<svg viewBox="0 0 200 118" style="width:100%; max-width:230px; display:block; margin:0 auto;">' + arcos + marcas + aguja + '</svg>';
+    }
+
+    function calcular() {
+      var tieneSeguro = document.querySelector('input[name=tieneseguro]:checked').value;
+      document.getElementById('script-no-seguro').classList.toggle('hidden', tieneSeguro !== 'no');
+      document.getElementById('script-si-seguro').classList.toggle('hidden', tieneSeguro !== 'si');
+      document.getElementById('pregunta-origen-seguro').classList.toggle('hidden', tieneSeguro !== 'si');
+      if (tieneSeguro === 'si') {
+        var origenSeguro = document.querySelector('input[name=origenseguro]:checked').value;
+        document.getElementById('script-origen-agente').classList.toggle('hidden', origenSeguro !== 'agente');
+        document.getElementById('script-origen-empleo').classList.toggle('hidden', origenSeguro !== 'empleo');
+      } else {
+        document.getElementById('script-origen-agente').classList.add('hidden');
+        document.getElementById('script-origen-empleo').classList.add('hidden');
+      }
+      document.getElementById('submenu-medicare').classList.toggle('hidden', tieneSeguro !== 'medicare');
+
+      var puedeContinuar = true;
+
+      if (tieneSeguro === 'medicare') {
+        var tipoMedicare = document.querySelector('input[name=tipomedicare]:checked').value;
+        document.getElementById('script-medicaid').classList.toggle('hidden', tipoMedicare !== 'medicaid');
+        document.getElementById('submenu-parteA').classList.toggle('hidden', tipoMedicare !== 'medicare');
+
+        if (tipoMedicare === 'medicaid') {
+          puedeContinuar = false;
+        } else {
+          var parteA = document.querySelector('input[name=parteA]:checked').value;
+          document.getElementById('script-medicare-activo').classList.toggle('hidden', parteA !== 'activo');
+          document.getElementById('script-medicare-sin-parteA').classList.toggle('hidden', parteA !== 'sinparteA');
+          puedeContinuar = (parteA === 'sinparteA');
+        }
+      }
+
+      document.getElementById('resto-1').classList.toggle('hidden', !puedeContinuar);
+      if (!puedeContinuar) return;
+
+      var conoceObamacare = document.querySelector('input[name=conoceobamacare]:checked').value;
+      document.getElementById('script-conoce-si').classList.toggle('hidden', conoceObamacare !== 'si');
+      document.getElementById('script-conoce-no').classList.toggle('hidden', conoceObamacare !== 'no');
+
+      var status = document.getElementById('status-migratorio').value;
+      var taxes = document.querySelector('input[name=taxes]:checked').value;
+      var calificaClasificacion = (status !== 'ninguno') && (taxes === 'si');
+
+      document.getElementById('alerta-clasificacion').classList.toggle('hidden', calificaClasificacion);
+      document.getElementById('script-transicion').classList.toggle('hidden', !calificaClasificacion);
+      document.getElementById('resto-2').classList.toggle('hidden', !calificaClasificacion);
+      document.getElementById('resto-3').classList.toggle('hidden', !calificaClasificacion);
+      if (!calificaClasificacion) return;
+
+      var zip = (document.getElementById('zip').value || '').trim();
+      var alertaEstado = document.getElementById('alerta-estado');
+      var okEstado = document.getElementById('ok-estado');
+      var alertaNoExpandido = document.getElementById('alerta-no-expandido');
+      var alertaSiExpandido = document.getElementById('alerta-si-expandido');
+      var estadoDetectado = null;
+      if (zip.length === 5 && /^\d{5}$/.test(zip)) {
+        estadoDetectado = buscarEstadoPorZip(zip);
+        if (estadoDetectado && nombresEstado[estadoDetectado]) {
+          alertaEstado.classList.add('hidden');
+          okEstado.classList.remove('hidden');
+          okEstado.innerHTML = '✅ Estado detectado: ' + nombresEstado[estadoDetectado] + ' (' + estadoDetectado + ')' +
+            '<div style="margin-top:6px; font-weight:400; color:#fbbf24;">⚠️ Confirma con tu agencia si están autorizados para vender en este estado antes de continuar.</div>';
+          var noExpandio = estadosSinExpansion.indexOf(estadoDetectado) !== -1;
+          alertaNoExpandido.classList.toggle('hidden', !noExpandio);
+          alertaSiExpandido.classList.toggle('hidden', noExpandio);
+        } else {
+          alertaEstado.classList.remove('hidden');
+          okEstado.classList.add('hidden');
+          alertaNoExpandido.classList.add('hidden');
+          alertaSiExpandido.classList.add('hidden');
+        }
+      } else {
+        alertaEstado.classList.add('hidden');
+        okEstado.classList.add('hidden');
+        alertaNoExpandido.classList.add('hidden');
+        alertaSiExpandido.classList.add('hidden');
+      }
+
+      var hogarMixto = document.querySelector('input[name=hogarmixto]:checked').value;
+      document.getElementById('pregunta-titular-alterno').classList.toggle('hidden', hogarMixto !== 'si');
+
+      if (hogarMixto === 'si') {
+        var titularAlterno = document.querySelector('input[name=titularalterno]:checked').value;
+        document.getElementById('alerta-hogar-mixto-si').classList.toggle('hidden', titularAlterno !== 'si');
+        document.getElementById('alerta-hogar-mixto-no').classList.toggle('hidden', titularAlterno !== 'no');
+      } else {
+        document.getElementById('alerta-hogar-mixto-si').classList.add('hidden');
+        document.getElementById('alerta-hogar-mixto-no').classList.add('hidden');
+      }
+
+      var casado = document.querySelector('input[name=casado]:checked').value;
+      document.getElementById('declaracion-conjunta-block').classList.toggle('hidden', casado !== 'si');
+      var declaracionInput = document.querySelector('input[name=declaracion]:checked');
+      var declaracion = declaracionInput ? declaracionInput.value : 'si';
+      var declaraSeparado = (casado === 'si' && declaracion === 'no');
+      document.getElementById('alerta-separado').classList.toggle('hidden', !declaraSeparado);
+
+      var dependientes = Math.max(0, Math.min(parseInt(document.getElementById('dependientes').value || '0', 10), 10));
+      var personas = 1;
+      if (casado === 'si' && declaracion === 'si') personas += 1;
+      personas += dependientes;
+      document.getElementById('hogar-calculado').textContent = '📊 Tamaño de hogar para ACA (calculado): ' + personas + ' persona' + (personas > 1 ? 's' : '');
+
+      var ingresoBrutoTotal = 0;
+      var detalleCotizantes = [];
+
+      function procesarPeriodo(cid, sufijo, pid) {
+        var pref = cid + '-' + sufijo + '-' + pid;
+        var desdeEl = document.getElementById('periodo-desde-' + pref);
+        var hastaEl = document.getElementById('periodo-hasta-' + pref);
+        var metodoEl = document.querySelector('input[name=periodo-metodo-' + pref + ']:checked');
+        if (!desdeEl || !hastaEl || !metodoEl) return { ingreso: 0, meses: 0 };
+        var desde = parseInt(desdeEl.value, 10);
+        var hasta = parseInt(hastaEl.value, 10);
+        var meses = Math.max(1, hasta - desde + 1);
+        var semanas = Math.round(meses * 52 / 12);
+        var metodo = metodoEl.value;
+
+        document.getElementById('periodo-campo-fijo-' + pref).classList.toggle('hidden', metodo !== 'fijo');
+        document.getElementById('periodo-campo-semanal-' + pref).classList.toggle('hidden', metodo !== 'semanal');
+        document.getElementById('periodo-campo-hora-' + pref).classList.toggle('hidden', metodo !== 'hora');
+
+        var ingreso = 0;
+        if (metodo === 'fijo') {
+          var vFijo = parseFloat((document.getElementById('periodo-fijo-' + pref) || {}).value);
+          ingreso = (!isNaN(vFijo) && vFijo > 0) ? vFijo : 0;
+        } else if (metodo === 'semanal') {
+          var vSem = parseFloat((document.getElementById('periodo-semanal-' + pref) || {}).value);
+          ingreso = (!isNaN(vSem) && vSem > 0) ? vSem * semanas : 0;
+        } else if (metodo === 'hora') {
+          var vTarifa = parseFloat((document.getElementById('periodo-tarifahora-' + pref) || {}).value);
+          var vHoras = parseFloat((document.getElementById('periodo-horassemana-' + pref) || {}).value);
+          ingreso = (!isNaN(vTarifa) && !isNaN(vHoras) && vTarifa > 0 && vHoras > 0) ? vTarifa * vHoras * semanas : 0;
+        }
+
+        var ingresoEl = document.getElementById('periodo-ingreso-' + pref);
+        if (ingresoEl) {
+          ingresoEl.textContent = 'Ingreso del período: $' + Math.round(ingreso).toLocaleString('en-US');
+        }
+        return { ingreso: ingreso, meses: meses };
+      }
+
+      function procesarEmpleo(cid, sufijo) {
+        var modoEl = document.querySelector('input[name=modo-' + cid + '-' + sufijo + ']:checked');
+        var modo = modoEl ? modoEl.value : 'estandar';
+        var estandarBlockEl = document.getElementById('modo-estandar-' + cid + '-' + sufijo);
+        var variableBlockEl = document.getElementById('modo-variable-' + cid + '-' + sufijo);
+        if (estandarBlockEl) estandarBlockEl.classList.toggle('hidden', modo !== 'estandar');
+        if (variableBlockEl) variableBlockEl.classList.toggle('hidden', modo !== 'variable');
+
+        var tipoEl = document.querySelector('input[name=tipo-' + cid + '-' + sufijo + ']:checked');
+        if (!tipoEl) return 0;
+        var tipo = tipoEl.value;
+
+        var pregunta1099El = document.getElementById('pregunta-1099-' + cid + '-' + sufijo);
+        if (pregunta1099El) pregunta1099El.classList.toggle('hidden', tipo !== '1099');
+
+        var deducibleEl = document.getElementById('deducible-' + cid + '-' + sufijo);
+        var deducible = (tipo === '1099' && deducibleEl) ? (parseFloat(deducibleEl.value) || 0) : 0;
+        var deducibleBlockEl = document.getElementById('deducible-block-' + cid + '-' + sufijo);
+        if (deducibleBlockEl) deducibleBlockEl.classList.toggle('hidden', tipo !== '1099');
+        var deducibleHintEl = document.getElementById('deducible-hint-' + cid + '-' + sufijo);
+        var validacionEl = document.getElementById('validacion-deducible-' + cid + '-' + sufijo);
+        if (tipo === '1099' && deducibleHintEl && validacionEl) {
+          if (personas <= 1) {
+            deducibleHintEl.textContent = '💡 Persona sola (sin grupo familiar): use $5,000.';
+            if (deducible > 0 && deducible < 5000) {
+              validacionEl.innerHTML = '⚠️ <b>Monto muy bajo.</b> Se espera $5,000 — ajústalo.';
+              validacionEl.style.color = '#f87171';
+            } else if (deducible >= 5000) {
+              validacionEl.innerHTML = '✅ Monto correcto.';
+              validacionEl.style.color = '#4ade80';
+            } else {
+              validacionEl.innerHTML = '';
+            }
+          } else {
+            deducibleHintEl.textContent = '💡 Grupo familiar (' + personas + ' personas): use $8,000.';
+            if (deducible > 0 && deducible !== 8000) {
+              validacionEl.innerHTML = '⚠️ <b>Se espera $8,000</b> para grupo familiar.';
+              validacionEl.style.color = '#f87171';
+            } else if (deducible === 8000) {
+              validacionEl.innerHTML = '✅ Monto correcto.';
+              validacionEl.style.color = '#4ade80';
+            } else {
+              validacionEl.innerHTML = '';
+            }
+          }
+        }
+
+        var anualBruto = 0;
+        if (modo === 'estandar') {
+          var montoEl = document.getElementById('monto-' + cid + '-' + sufijo);
+          var frecuenciaEl = document.getElementById('frecuencia-' + cid + '-' + sufijo);
+          if (montoEl && frecuenciaEl) {
+            var monto = parseFloat(montoEl.value);
+            var frecuencia = parseFloat(frecuenciaEl.value);
+            anualBruto = (!isNaN(monto) && monto > 0) ? (monto * frecuencia) : 0;
+          }
+        } else {
+          var contenedorPeriodos = document.getElementById('periodos-' + cid + '-' + sufijo);
+          var mesesCubiertos = 0;
+          if (contenedorPeriodos) {
+            contenedorPeriodos.querySelectorAll('.periodo-bloque').forEach(function(bloque) {
+              var pid = bloque.getAttribute('data-pid');
+              var r = procesarPeriodo(cid, sufijo, pid);
+              anualBruto += r.ingreso;
+              mesesCubiertos += r.meses;
+            });
+          }
+          var resumenEl = document.getElementById('variable-resumen-' + cid + '-' + sufijo);
+          if (resumenEl) {
+            resumenEl.innerHTML = 'Ingreso anual estimado: $' + Math.round(anualBruto).toLocaleString('en-US') + '<br>Meses cubiertos: ' + Math.min(mesesCubiertos, 12) + ' / 12';
+          }
+        }
+
+        var anual = anualBruto - deducible;
+        if (anual < 0) anual = 0;
+        var subtotalEl = document.getElementById('subtotal-' + cid + '-' + sufijo);
+        if (subtotalEl) {
+          subtotalEl.textContent = anual > 0 ? '➡️ Total anual (neto): $' + Math.round(anual).toLocaleString('en-US') : '';
+        }
+        return anual;
+      }
+
+      cotizantes.forEach(function(c, i) {
+        var anualE1 = procesarEmpleo(c.id, 'e1');
+
+        var tieneEmpleo2El = document.getElementById('tiene-empleo2-' + c.id);
+        var tieneEmpleo2 = tieneEmpleo2El ? tieneEmpleo2El.checked : false;
+        var empleo2BlockEl = document.getElementById('empleo2-block-' + c.id);
+        if (empleo2BlockEl) empleo2BlockEl.classList.toggle('hidden', !tieneEmpleo2);
+
+        var anualE2 = tieneEmpleo2 ? procesarEmpleo(c.id, 'e2') : 0;
+
+        var anualCotizante = anualE1 + anualE2;
+        if (anualCotizante > 0) {
+          ingresoBrutoTotal += anualCotizante;
+          var nombreEnVivo = (document.getElementById('nombre-' + c.id) || {}).value;
+          detalleCotizantes.push((nombreEnVivo || 'Cotizante ' + (i + 1)) + ': $' + Math.round(anualCotizante).toLocaleString('en-US'));
+        }
+      });
+
+      var ingresoAnualTotal = ingresoBrutoTotal;
+      var ingreso = ingresoAnualTotal / 12;
+
+      var ingresoCalculado = document.getElementById('ingreso-calculado');
+      if (ingresoAnualTotal > 0) {
+        var detalle = '💰 Ingreso anual neto total del hogar: $' + Math.round(ingresoAnualTotal).toLocaleString('en-US');
+        if (detalleCotizantes.length > 1) {
+          detalle += '<br>(' + detalleCotizantes.join(' + ') + ')';
+        }
+        detalle += '<br>📊 Ingreso mensual equivalente: $' + Math.round(ingreso).toLocaleString('en-US');
+        ingresoCalculado.innerHTML = detalle;
+      } else {
+        ingresoCalculado.innerHTML = '';
+      }
+
+      var resMetal = document.getElementById('res-metal');
+      var resSub = document.getElementById('res-sub');
+
+      document.querySelectorAll('.opcion').forEach(function(el) {
+        var input = el.querySelector('input');
+        if (input) el.classList.toggle('selected', input.checked);
+      });
+
+      if (declaraSeparado) {
+        resMetal.textContent = '📝 No aplica un plan con subsidio todavía';
+        resMetal.className = 'resultado-metal amarillo-txt';
+        resSub.textContent = 'Declarar por separado generalmente excluye del subsidio. Guión: "Entiendo, y quiero asegurarme de ayudarle de la mejor forma. Voy a tomar nota de su información, y en cuanto se confirme si aplica alguna excepción a su caso, lo vuelvo a contactar con las opciones disponibles."';
+        document.getElementById('fpl-gauge').innerHTML = '';
+        document.getElementById('resto-4').classList.add('hidden');
+        return;
+      }
+
+      if (isNaN(ingreso) || ingreso <= 0) {
+        document.getElementById('resto-4').classList.add('hidden');
+        return;
+      }
+      document.getElementById('resto-4').classList.remove('hidden');
+
+      var salud = document.querySelector('input[name=salud]:checked').value;
+
+      // Umbrales basados en Guías Federales de Pobreza 2025 (usadas para cobertura 2026): $15,650 base + $5,500/persona adicional
+      var fplBase100 = 15650 + 5500 * (personas - 1);
+      var pisoMinimo = fplBase100 / 12; // 100% FPL mensual — piso mínimo para calificar a subsidio ACA
+      var verdeLimite = (fplBase100 * 2.5) / 12;   // 250% FPL mensual (límite de CSR)
+      var amarilloLimite = (fplBase100 * 4) / 12;  // 400% FPL mensual (límite del subsidio)
+
+      var estadoNoExpandio = estadoDetectado ? (estadosSinExpansion.indexOf(estadoDetectado) !== -1) : true;
+
+      if (ingreso < pisoMinimo && estadoNoExpandio) {
+        resMetal.textContent = '🛑 Posible "vacío de cobertura" — no calificaría todavía';
+        resMetal.className = 'resultado-metal rojo-txt';
+        resSub.textContent = 'Este estado no expandió Medicaid — un ingreso tan bajo puede no calificar ni para Medicaid ni para subsidio ACA (que empieza en 100% FPL). No ofrezcas un plan pagado completo — usa el guión de seguimiento de abajo.';
+        document.getElementById('fpl-gauge').innerHTML = '<div class="alerta-box">📌 <b>Guión sugerido:</b> "Entiendo su situación — en este momento, con ese ingreso, no calificaría para la ayuda del gobierno bajo las reglas actuales. Voy a guardar sus datos, y en cuanto haya un cambio en su ingreso o una opción que le sirva, lo vuelvo a contactar. Mientras tanto, si su ingreso cambia, por favor avísenos."</div>';
+        document.getElementById('resto-4').classList.add('hidden');
+        return;
+      } else if (ingreso < pisoMinimo && !estadoNoExpandio) {
+        resMetal.textContent = '📍 Probablemente califica para Medicaid, no para Obamacare';
+        resMetal.className = 'resultado-metal amarillo-txt';
+        resSub.textContent = 'Este estado SÍ expandió Medicaid — con un ingreso tan bajo, la persona probablemente califica para Medicaid en vez de un plan del Mercado. Refiérela al programa de Medicaid de su estado.';
+        document.getElementById('fpl-gauge').innerHTML = '';
+        document.getElementById('resto-4').classList.add('hidden');
+        return;
+      }
+
+      var colorTier = ingreso <= verdeLimite ? 'verde' : (ingreso <= amarilloLimite ? 'amarillo' : 'rojo');
+
+      var fplPorcentaje = (ingresoAnualTotal / fplBase100) * 100;
+      var fplColorTexto = fplPorcentaje <= 250 ? '#4ade80' : (fplPorcentaje <= 400 ? '#fbbf24' : '#f87171');
+      var fplBox = document.getElementById('fpl-gauge');
+      if (fplBox) {
+        var textoGauge = '<div style="text-align:center;">' +
+          '<div style="font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px;">% del Nivel Federal de Pobreza (referencia interna)</div>' +
+          '<div style="font-size:32px; font-weight:800; color:' + fplColorTexto + '; margin:4px 0;">' + Math.round(fplPorcentaje) + '%</div>' +
+          construirGaugeSVG(fplPorcentaje) +
+          '</div>';
+        if (fplPorcentaje >= 385 && fplPorcentaje <= 415) {
+          textoGauge += '<div class="alerta-box" style="margin-top:10px;">🚨 <b>MUY CERCA DEL PRECIPICIO DEL 400%.</b> Desde 2026 no hay tope de devolución: si el ingreso real del cliente termina pasando el 400%, tendría que devolver TODO el subsidio al declarar impuestos. Sé extremadamente preciso con el ingreso — si hay duda, redondea hacia ARRIBA, nunca hacia abajo, y adviértele esto al cliente claramente.</div>';
+        } else if (fplPorcentaje > 400) {
+          textoGauge += '<div class="alerta-box" style="margin-top:10px;">⚠️ Por encima del 400% FPL: desde 2026 <b>no hay ningún subsidio</b> (volvió el "precipicio"). El cliente pagaría el precio completo de la prima.</div>';
+        }
+        fplBox.innerHTML = textoGauge;
+      }
+
+      var metal, metalClase, subTexto;
+      if (colorTier === 'verde') {
+        metal = '🥈 PLATA (muy recomendado) — ayuda máxima';
+        metalClase = 'verde-txt';
+        subTexto = 'Ayuda fuerte del gobierno (CSR). No lo pases a Bronce u Oro, pierde el descuento de deducible.';
+      } else {
+        var nivelTxt = colorTier === 'amarillo' ? 'ayuda parcial' : 'sin ayuda del gobierno';
+        if (salud === 'bajo') {
+          metal = '🥉 BRONCE (' + nivelTxt + ')';
+          metalClase = colorTier === 'amarillo' ? 'amarillo-txt' : 'rojo-txt';
+          subTexto = 'Uso bajo del seguro → prima más baja le conviene más que deducible bajo.';
+        } else if (salud === 'medio') {
+          metal = '🥈 PLATA (' + nivelTxt + ')';
+          metalClase = colorTier === 'amarillo' ? 'amarillo-txt' : 'rojo-txt';
+          subTexto = 'Uso moderado → buen balance entre prima y deducible.';
+        } else {
+          metal = '🥇 ORO (' + nivelTxt + ')';
+          metalClase = colorTier === 'amarillo' ? 'amarillo-txt' : 'rojo-txt';
+          subTexto = 'Uso alto, condición crónica, prescripciones, cirugía o embarazo → prioriza deducible bajo.';
+        }
+      }
+      resMetal.textContent = metal;
+      resMetal.className = 'resultado-metal ' + metalClase;
+      resSub.textContent = subTexto;
+
+      var metalLimpio = metal.replace(/🥉|🥈|🥇/g, '').trim();
+      var resumenTexto =
+        'CÓDIGO POSTAL: ' + (zip || '(sin llenar)') + '\n' +
+        'TAMAÑO DE HOGAR (ACA): ' + personas + '\n' +
+        'INGRESO MENSUAL: $' + Math.round(ingreso).toLocaleString('en-US') + '\n' +
+        'INGRESO ANUAL: $' + Math.round(ingresoAnualTotal).toLocaleString('en-US') + '\n' +
+        'METAL SUGERIDO: ' + metalLimpio + '\n' +
+        'ASEGURADORAS A REVISAR: Ambetter, Oscar, Aetna, Cigna, Molina, United\n' +
+        (detalleCotizantes.length ? 'COTIZANTES: ' + detalleCotizantes.join(' | ') : '');
+      var resumenContenido = document.getElementById('resumen-contenido');
+      if (resumenContenido) resumenContenido.textContent = resumenTexto;
+    }
+
+    document.getElementById('btn-copiar-resumen').addEventListener('click', function() {
+      var texto = document.getElementById('resumen-contenido').textContent;
+      var msg = document.getElementById('copiado-msg');
+      var mostrarMsg = function() {
+        msg.classList.remove('hidden');
+        setTimeout(function() { msg.classList.add('hidden'); }, 2500);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(texto).then(mostrarMsg).catch(function() {
+          var ta = document.createElement('textarea');
+          ta.value = texto;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          mostrarMsg();
+        });
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = texto;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        mostrarMsg();
+      }
+    });
+
+    document.querySelectorAll('input, select').forEach(function(el) {
+      el.addEventListener('input', calcular);
+      el.addEventListener('change', calcular);
+    });
+
+    document.getElementById('traductor-input').addEventListener('input', traducirOcupacion);
+    document.getElementById('telefono-input').addEventListener('input', verificarTelefono);
+
+    document.getElementById('btn-agregar-cotizante').addEventListener('click', function() {
+      sincronizarCotizantesDesdeDOM();
+      cotizantes.push({ id: siguienteId, nombre: '', montoE1: '', frecuenciaE1: '12', tipoE1: 'w2', deducibleE1: '', modoE1: 'estandar', periodosE1: [], tieneEmpleo2: false, montoE2: '', frecuenciaE2: '12', tipoE2: 'w2', deducibleE2: '', modoE2: 'estandar', periodosE2: [] });
+      siguienteId++;
+      renderCotizantes();
+      calcular();
+    });
+
+    document.addEventListener('click', function(e) {
+      var btnAgregarP = e.target.closest('[data-agregar-periodo]');
+      if (btnAgregarP) {
+        sincronizarCotizantesDesdeDOM();
+        var partes = btnAgregarP.getAttribute('data-agregar-periodo').split('|');
+        var cid = parseInt(partes[0], 10), sufijo = partes[1];
+        var cot = cotizantes.find(function(c) { return c.id === cid; });
+        if (cot) {
+          var arr = sufijo === 'e1' ? cot.periodosE1 : cot.periodosE2;
+          arr.push({ pid: siguientePeriodoId, desde: '0', hasta: '0', metodo: 'fijo' });
+          siguientePeriodoId++;
+          renderCotizantes();
+          calcular();
+        }
+        return;
+      }
+      var btnQuitarP = e.target.closest('[data-quitar-periodo]');
+      if (btnQuitarP) {
+        sincronizarCotizantesDesdeDOM();
+        var partesQ = btnQuitarP.getAttribute('data-quitar-periodo').split('|');
+        var cidQ = parseInt(partesQ[0], 10), sufijoQ = partesQ[1], pidQ = parseInt(partesQ[2], 10);
+        var cotQ = cotizantes.find(function(c) { return c.id === cidQ; });
+        if (cotQ) {
+          if (sufijoQ === 'e1') cotQ.periodosE1 = cotQ.periodosE1.filter(function(p) { return p.pid !== pidQ; });
+          else cotQ.periodosE2 = cotQ.periodosE2.filter(function(p) { return p.pid !== pidQ; });
+          renderCotizantes();
+          calcular();
+        }
+      }
+    });
+
+    function mostrarTab(n) {
+      document.querySelectorAll('[data-tab]').forEach(function(el) {
+        el.classList.toggle('tab-oculto', el.getAttribute('data-tab') !== String(n));
+      });
+      document.querySelectorAll('.tab-btn').forEach(function(btn) {
+        btn.classList.toggle('tab-activo', btn.getAttribute('data-goto-tab') === String(n));
+      });
+      window.scrollTo(0, 0);
+    }
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        mostrarTab(btn.getAttribute('data-goto-tab'));
+      });
+    });
+    mostrarTab(1);
+
+    renderCotizantes();
+    calcular();
+  </script>
+</body>
+</html>
